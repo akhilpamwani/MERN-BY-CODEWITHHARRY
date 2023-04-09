@@ -1,10 +1,10 @@
 const express= require('express');
 const app = express();
-
+const path = require('path');
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
-dotenv.config();
+dotenv.config(path: './config.env' );
 const PORT =process.env.PORT
 const connectToDB=require('./db');
 
