@@ -1,23 +1,28 @@
 const express= require('express');
 const app = express();
-const path = require('path');
+
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
-dotenv.config(path: './config.env' );
+dotenv.config();
 const PORT =process.env.PORT
-const connectToDB=require('./db');
+const connectToDB=require('./Database/db');
 
 app.use(cors());
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }))
+app.use(bodyParser.json())
 app.use(express.json());
-connectToDB()
+connectToDB();
 
+//  Routes
 
+app.use('/api/auth',require('./routes/auth'));
+app.use('/api/notes',require('./routes/notes'));
 
-app.get('/',()=>{
-  console.log("Hello World");
-})
+app.get('/',(req,res)=>{
+    res.send("Hello World")
+})  
+
 app.listen(PORT,()=>{
 
     console.log(`Server is running on port ${PORT}`)
