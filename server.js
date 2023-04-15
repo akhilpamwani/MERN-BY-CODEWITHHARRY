@@ -4,11 +4,11 @@ const app = express();
 const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 const cors = require('cors');
+app.use(cors());
 dotenv.config();
 const PORT =process.env.PORT
 const connectToDB=require('./Database/db');
 
-app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 app.use(express.json());

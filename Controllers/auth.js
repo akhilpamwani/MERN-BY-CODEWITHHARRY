@@ -2,14 +2,16 @@ const UserModel = require("../Models/auth");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const {  validationResult } = require("express-validator");
-const fetchuser = require("../Middleware/fetchuser");
+
+// ROUTE 1: Create a User using: POST "/api/auth/signup". 
+
 exports.Signup = async (req, res) => {
 
   // Checking Validation
-
+  let success=false;
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({success, errors: errors.array() });
   }
   try {
     
@@ -23,7 +25,8 @@ exports.Signup = async (req, res) => {
     let user = await UserModel.findOne({ email: req.body.email });
 
     if (user) {
-       res.status(400).json({ msg: "User Already Exist" });
+      success= false;
+       res.status(400).json({success, msg: "User Already Exist" });
     }
 
     // Hashing Password
@@ -50,22 +53,30 @@ exports.Signup = async (req, res) => {
 
     const authtoken = jwt.sign(data, process.env.JWT_SECRET);
 
+    // Success Response
+
+
+    success= true;
+
     // Sending Response
 
-    res.status(200).json({ msg: "User Created Successfully", authtoken });
+    res.status(200).json({success, msg: "User Created Successfully", authtoken });
   } catch (error) {
     console.log(error.message);
     res.status(500).send("Internal Server Error");
   }
 };
 
+// ROUTE 2: Authenticate a User using: POST "/api/auth/login". 
+
 exports.Login = async (req, res) => {
  
   // Checking Validation
-
+  let success=false;
+    
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+    return res.status(400).json({success, errors: errors.array() });
   }
   try {
     // Request Body
@@ -76,14 +87,15 @@ exports.Login = async (req, res) => {
 
     let user = await UserModel.findOne({ email: email });
 
-
-    
+ 
     if (!user) {
-      return res.status(412).json({ msg: "Invalid Email or Passwords" });
+    success= false;
+      return res.status(412).json({success, msg: "Invalid Email or Passwords" });
     }
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(413).json({ msg: "Invalid Email or Passwords" });
+     success= false;
+      return res.status(413).json({success, msg: "Invalid Email or Passwords" });
     }
 
     // Creating Payload
@@ -98,11 +110,15 @@ exports.Login = async (req, res) => {
 
     const authtoken = jwt.sign(data, process.env.JWT_SECRET);
 
+    // Success Response
+
+    success= true;
+
     // Sending Response
 
     return res
       .status(201)
-      .json({ msg: "User Loged In Successfully", authtoken });
+      .json({success, msg: "User Loged In Successfully", authtoken });
   } catch (error) {
     console.log(error.message);
     res.status(500).send("Internal Server Error");
