@@ -16,8 +16,8 @@ exports.uploadFile= async (request, response) => {
 }
 exports.downloadFile=async (request, response) => {
     try {   
-        const file = await File.findById(request.params._id);
-        console.log(file);
+        const file = await File.findById(request.params.fileID);
+        // console.log(file);
         file.downloadCount++;
 
         await file.save();

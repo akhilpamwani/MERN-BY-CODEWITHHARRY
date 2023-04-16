@@ -4,6 +4,6 @@ const router=express.Router();
 const upload=require('../Middleware/FileShare');
 
 router.post('/upload', upload.single('file'), uploadFile);
-router.get('/file/:fileId', downloadFile);
+router.get('/file/:fileID', downloadFile);
 
 module.exports=router;
